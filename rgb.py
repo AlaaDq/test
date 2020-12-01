@@ -4,15 +4,30 @@ import gevent
 import time
 import json
 
-
+'''
+Setting up the webserver
+'''
 app = Flask(__name__)
 app.debug = True
 
+'''
+Setting up the websockets
+'''
 sockets = Sockets(app)
 
+'''
+Handling multiple clients
+'''
 clients = list()
 
+'''
+Store red, green, blue color data globally
+'''
+rgb = {'r':0, 'g':0, 'b':0}
 
+'''
+User-defined class for clients
+'''
 class Client:
 	def __init__(self):
 		self.queue = gevent.queue.Queue()
@@ -20,12 +35,26 @@ class Client:
 		self.queue.put_nowait(v)
 	def get(self):
 		return self.queue.get()
-
-def send_all(msg):
+'''
+User-defined function for sending data on the 
+websocket to all clients
+'''
+def send_all_json(msg):
 	for client in clients:
-		client.put(msg)
+		client.put(json.dumps(msg))
+'''
+Helper function for testing the validity of json format
+'''
+def is_json(text):
+	try:
+		json.loads(text)
+	except ValueError, e:
+		return False
+	return True
 
-
+'''
+Greenlet function to read from websocket
+'''
 def read_ws(ws, client):
 	while not ws.closed:
 		gevent.sleep(0)
@@ -34,12 +63,17 @@ def read_ws(ws, client):
 			print "WS RECEIVED: %s" % msg
 			if(msg is None):
 				client.put(msg)
-			else
-                send_all(msg)
+			elif (is_json(msg)):
+				send_all_json(json.loads(msg)) # Assuming the data is properly formatted :)
+			else:
+				raise ValueError('Not a JSON string')
 		except:
 			print "WS ERROR: read_ws exception"
 
-
+'''
+Adding a route to the websockets server
+to "subscribe" clients
+'''
 @sockets.route('/subscribe')
 def subscribe_socket(ws):
 	client = Client() # User-defined object to store client info
@@ -61,17 +95,9 @@ def subscribe_socket(ws):
 		clients.remove(client)
 		gevent.kill(g)
 
-
-
-@sockets.route('/echo')
-def echo_socket(ws):
-    while not ws.closed:
-        message=ws.receive()
-        ws.send(message)
-
-
-
-
+'''
+Adding a route to the webserver
+'''
 @app.route('/')
 def index():
 	return render_template("index.html")
