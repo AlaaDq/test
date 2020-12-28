@@ -1,29 +1,98 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" 
+	href= "{{ url_for('static',filename='styles/style.css') }}"
+	>
+    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
+    <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700&display=swap" rel="stylesheet">
+    <title>RGB</title>
+</head>
 <body>
-	<div>
-		<!-- Get the desired color of an LED -->
-		<fieldset>
-			<legend>Choose wisely!</legend>
+    <div class="container">
+        <div class="card">
+            <div class="shoeBackground">
+                <div class="gradients">
+                    <div class="gradient second" color="blue"></div>
+                    <div class="gradient" color="red"></div>
+                    <div class="gradient" color="green"></div>
+                    <div class="gradient" color="orange"></div>
+                    <div class="gradient" color="black"></div>
+                </div>
+              <h1 class="mode">mode
+             </h1>
+                            <h3  class="modenum">1</h3>
+
+                  
+                <a href="#" class="share"><i class="fas fa-share-alt"></i></a>
+
+                <img src="img/blue.png" alt="" class="shoe show" color="blue">
+                <img src="img/red.png" alt="" class="shoe" color="red">
+                <img src="img/green.png" alt="" class="shoe" color="green">
+                <img src="img/orange.png" alt="" class="shoe" color="orange">
+                <img src="img/black.png" alt="" class="shoe" color="black">
+
+            </div>
+            <div class="info">
+                <div class="shoeName">
+                    <div>
+                        <h1 class="big">IoT Project</h1>
+                        <span class="new">2020-2021</span>
+                      
+                    </div>
+                    <h3 class="small">RGB Led Controller</h3>
+                </div>
+              
+         <fieldset>
+			<legend>Color Picker!</legend>
 			<div>
-            <button onclick="toggle()">red led</button>                
+				<input type="color" id="led-color" value="#000000" oninput="sendrgb()" />
+				<label for="led-color">LED Color</label>
 			</div>
 		</fieldset>
-	</div>
-	<script type="text/javascript">
-		// Setting up the websocket (client-side)
-		var webSocket;
-		webSocket = new WebSocket('ws://'+window.location.hostname + ':80/subscribe');
-		webSocket.onmessage = function(event) { onMessage(event); }
-        var state=false;
 
-        function toggle(){
-            state=!state;
-            webSocket.send(JSON.stringify({"state":state}));
-        }
+                <div class="color-container">
+                                          <hr>       
 
-		function onMessage(event) {
-			console.log(event.data);
-		}
-	</script>
+                    <h3 class="title">Mode</h3>
+                    <div class="colors">
+                        <span class="color active" primary="#2175f5" color="blue"
+onclick="activate(1)"
+                              ></span>
+                        <span class="color" primary="#f84848" color="red"
+           onclick="activate(2)"
+                              ></span>
+                        <span class="color" primary="#29b864" color="green"
+            onclick="activate(3)"
+                              ></span>
+                        <span class="color" primary="#ff5521" color="orange"
+          onclick="activate(4)"
+                              ></span>
+                        <span class="color" primary="#444" color="black"
+       onclick="activate(5)"
+                              ></span>
+                    </div>
+                </div>
+              
+                <div class="description">
+                    <h3 class="title">Made By</h3>
+                    <p class="text">
+      <ul>
+        <li>ammar Ksebati</li>
+        <li>abdulrahman al-abdullah</li>
+        <li>mohammad bitar</li>
+        <li>mohammad katlish </li>
+      </ul>
+  
+                  </p>
+                </div>
+  
+            </div>
+        </div>
+    </div>
+    <script src="{{ url_for('static',filename='app.js') }}"></script>
 </body>
 </html>
